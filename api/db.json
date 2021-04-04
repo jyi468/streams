@@ -1,3 +1,9 @@
 {
-  "streams": []
+  "streams": [
+    {
+      "title": "stream",
+      "description": "yoyoyo",
+      "id": 1
+    }
+  ]
 }
