@@ -14,6 +14,12 @@
       "title": "what",
       "description": "what",
       "id": 3
+    },
+    {
+      "title": "New stream",
+      "description": "with id",
+      "userId": "103550883306132851994",
+      "id": 4
     }
   ]
 }
