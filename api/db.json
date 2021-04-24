@@ -17,13 +17,12 @@
     },
     {
       "title": "New stream",
-      "description": "with id",
-      "userId": "103550883306132851994",
+      "description": "new description",
       "id": 4
     },
     {
       "title": "unexpected",
-      "description": "wut",
+      "description": "made by patch request",
       "userId": "103550883306132851994",
       "id": 5
     },
