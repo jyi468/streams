@@ -20,6 +20,10 @@ class StreamShow extends React.Component {
         this.buildPlayer();
     }
 
+    componentWillUnmount() {
+        this.player.destroy(); // destroy video once you navigate away
+    }
+
     buildPlayer() {
         const {id} =  this.props.match.params;
         // We stream needs to exist first because this.videoRef will not exist without it
