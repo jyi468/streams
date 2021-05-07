@@ -1,5 +1,6 @@
 import React from 'react';
-import {Field, reduxForm} from 'redux-form';
+import {Field, Form} from 'react-final-form';
+import {connect} from 'react-redux';
 
 // Move component declaration outside so that React does not render a new component every time
 const Error = ({error, touched}) => {
@@ -25,13 +26,17 @@ const Input = ({input, label, meta}) => {
     );
 };
 
-const StreamForm = ({handleSubmit, onSubmit}) => {
+const StreamForm = ({onSubmit, initialValues}) => {
     return (
-        <form onSubmit={handleSubmit((formValues) => onSubmit(formValues))} className="ui form error">
-            <Field name="title" component={Input} label="Enter Title"/>
-            <Field name="description" component={Input} label="Enter Description"/>
-            <button className="ui button primary">Submit</button>
-        </form>
+        <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
+            {({handleSubmit}) => (
+                <form onSubmit={handleSubmit} className="ui form error">
+                    <Field name="title" label="Enter Title">{Input}</Field>
+                    <Field name="description" component={Input} label="Enter Description"/>
+                    <button className="ui button primary">Submit</button>
+                </form>
+            )}
+        </Form>
     );
 };
 
@@ -48,9 +53,11 @@ const validate = (formValues) => {
     return errors;
 };
 
-const formWrapped = reduxForm({
-    form: 'streamForm',
-    validate
-})(StreamForm);
+const mapStateToProps = ({form}) => {
+    return {
+        streamForm: form
+    }
+};
 
-export default formWrapped;
+
+export default connect(mapStateToProps, {})(StreamForm);
