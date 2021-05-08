@@ -1,61 +1,60 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import flv from 'flv.js';
 import { connect } from 'react-redux';
 import { fetchStream } from '../../actions';
 
-class StreamShow extends React.Component {
-    constructor(props) {
-        super(props);
+const StreamShow = (props) => {
+    const videoRef = useRef(null);
+    const [player, setPlayer] = useState(null);
+    const {match, fetchStream, stream} = props;
+    useEffect(() => {
+        if (!stream) {
+            const {id} =  match.params;
+            fetchStream(id);
+        }
 
-        this.videoRef = React.createRef();
-    }
+        buildPlayer();
 
-    componentDidMount() {
-        const {id} =  this.props.match.params;
-        this.props.fetchStream(id);
-        this.buildPlayer();
-    }
+        return () => {
+            if (player) {
+                player.destroy();
+            }
+        };
+    }, [player]);
 
-    componentDidUpdate() {
-        this.buildPlayer();
-    }
 
-    componentWillUnmount() {
-        this.player.destroy(); // destroy video once you navigate away
-    }
-
-    buildPlayer() {
-        const {id} =  this.props.match.params;
-        // We stream needs to exist first because this.videoRef will not exist without it
-        // In the render, there is a condition where it won't render anything until it receieves stream
-        if (this.player || !this.props.stream) {
+    const buildPlayer = () => {
+        const {id} =  match.params;
+        // We stream needs to exist first because videoRef will not exist without it
+        // In the render, there is a condition where it won't render anything until it receives stream
+        if (player || !stream) {
             return;
         }
-        this.player = flv.createPlayer({
+        setPlayer(flv.createPlayer({
             type: 'flv',
             url: `http://localhost:8000/live/${id}.flv`
-        });
-        this.player.attachMediaElement(this.videoRef.current);
-        this.player.load();
-        //this.player.play();
-    }
-
-    render() {
-        if (!this.props.stream) {
-            return <div>Loading...</div>
+        }));
+        if (player) {
+            player.attachMediaElement(videoRef.current);
+            player.load();
         }
+        //player.play();
+    };
 
-        const {title, description} = this.props.stream;
-
-        return (
-            <div>
-                <video ref={this.videoRef} style={{ width: '100%', }} controls/>
-                <h1>{title}</h1>
-                <h5>{description}</h5>
-            </div>
-        );
+    if (!stream) {
+        return <div>Loading...</div>
     }
-}
+
+    const {title, description} = stream;
+
+    return (
+        <div>
+            <video ref={videoRef} style={{ width: '100%', }} controls/>
+            <h1>{title}</h1>
+            <h5>{description}</h5>
+        </div>
+    );
+};
 
 const mapStateToProps = (state, ownProps) => {
     return { stream: state.streams[ownProps.match.params.id] };
